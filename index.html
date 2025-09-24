@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Deposit</title>
+    <meta name="google-site-verification" content="TS1PgSCs1pm80fQcCdofI4GJHj9iZyqdgZRw3AZDuIc" />
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="deposit-card">
+            <div class="card-header">
+                <h2>Manual Deposit</h2>
+                <p class="amount"><span id="payableAmount">0</span></p>
+            </div>
+
+            <div class="payment-methods">
+                <h3>Pay Using</h3>
+                <div class="payment-buttons">
+                    <button onclick="openApp('phonepe')" class="pay-button phonepe">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe">
+                        PhonePe
+                    </button>
+                    <button onclick="openApp('gpay')" class="pay-button gpay">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay">
+                        Google Pay
+                    </button>
+                    <button onclick="openApp('paytm')" class="pay-button paytm">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/2560px-Paytm_Logo_%28standalone%29.svg.png" alt="Paytm">
+                        Paytm
+                    </button>
+                </div>
+            </div>
+
+            <div class="qr-section">
+                <div id="qrCode"></div>
+                <p class="scan-text">Scan QR to pay</p>
+            </div>
+
+            <div class="upi-details">
+                <div class="upi-id-section">
+                    <p>UPI ID:</p>
+                    <div class="copy-section">
+                        <div class="upi-info">
+                            <span id="upiId">loading...</span>
+                            <small id="upiName" class="upi-name"></small>
+                        </div>
+                        <button onclick="copyUpiId()" class="copy-btn">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="verification-section">
+                <div class="input-group">
+                    <label for="utrNumber">Enter UTR/Reference Number:</label>
+                    <input type="text" id="utrNumber" placeholder="Enter 12-digit UTR number">
+                </div>
+                <div class="screenshot-section">
+                    <label for="screenshotInput" class="screenshot-label">
+                        <i class="fas fa-image"></i>
+                        Upload Payment Screenshot (Optional)
+                    </label>
+                    <input type="file" id="screenshotInput" accept="image/*" class="screenshot-input">
+                    <div class="screenshot-preview" id="screenshotPreview"></div>
+                </div>
+                <button onclick="submitUTR()" class="submit-btn">Submit Payment</button>
+            </div>
+
+            <div class="instructions">
+                <h3>Payment Instructions:</h3>
+                <ol>
+                    <li>Scan QR code or copy UPI ID</li>
+                    <li>Make payment for the exact amount</li>
+                    <li>Copy UTR/Reference number from payment</li>
+                    <li>Submit the UTR number for verification</li>
+                </ol>
+            </div>
+
+            <div class="support-section">
+                <h3><i class="fas fa-headset"></i> Need Help?</h3>
+                <p>Contact our 24/7 support team at:</p>
+                <a href="mailto:manualpay@api.com">manualpay@api.com</a>
+                <div class="support-badges">
+                    <div class="support-badge">
+                        <i class="fas fa-clock"></i>
+                        <span>24/7 Support</span>
+                    </div>
+                    <div class="support-badge">
+                        <i class="fas fa-bolt"></i>
+                        <span>Quick Response</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-badges">
+                <div class="security-badge">
+                    <i class="fas fa-lock"></i>
+                    <span>256-bit SSL</span>
+                </div>
+                <div class="security-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Gateway</span>
+                </div>
+                <div class="security-badge">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Privacy Protected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
