@@ -26,10 +26,18 @@ async function fetchUpiId() {
         const response = await fetch('upi.txt');
         const data = await response.text();
         const upiData = JSON.parse(data);
-        
+
+        // Validate UPI data
+        if (!upiData.id || !upiData.name || !upiData.companyName) {
+            throw new Error('Invalid UPI data format');
+        }
+
         document.getElementById('upiId').textContent = upiData.id;
         document.getElementById('upiName').textContent = `Receiver: ${upiData.name}`;
-        generateQR(upiData.id, amount);
+
+        // Store company name securely in a constant
+        const companyName = encodeURIComponent(upiData.companyName);
+        generateQR(upiData.id, amount, companyName);
     } catch (error) {
         console.error('Error fetching UPI ID:', error);
         document.getElementById('upiId').textContent = 'Error loading UPI ID';
@@ -38,13 +46,16 @@ async function fetchUpiId() {
 }
 
 // Generate QR code
-function generateQR(upiId, amount) {
-    const upiUrl = `upi://pay?pa=${upiId}&pn=ALPHX&am=${amount}&cu=INR`;
-    
+function generateQR(upiId, amount, companyName) {
+    // Ensure all parameters are properly encoded
+    const encodedUpiId = encodeURIComponent(upiId);
+    const encodedAmount = encodeURIComponent(amount);
+    const upiUrl = `upi://pay?pa=${encodedUpiId}&pn=${companyName}&am=${encodedAmount}&cu=INR`;
+
     const qr = qrcode(0, 'M');
     qr.addData(upiUrl);
     qr.make();
-    
+
     document.getElementById('qrCode').innerHTML = qr.createImgTag(6);
 }
 
@@ -52,12 +63,12 @@ function generateQR(upiId, amount) {
 function copyUpiId() {
     const upiId = document.getElementById('upiId').textContent;
     const copyBtn = document.querySelector('.copy-btn');
-    
+
     navigator.clipboard.writeText(upiId).then(() => {
         // Change button style to show success
         copyBtn.style.backgroundColor = '#34a853';  // Green color
         copyBtn.textContent = 'Copied!';
-        
+
         // Reset button after 1.5 seconds
         setTimeout(() => {
             copyBtn.style.backgroundColor = '';
@@ -67,7 +78,7 @@ function copyUpiId() {
         console.error('Failed to copy:', err);
         copyBtn.style.backgroundColor = '#ea4335';  // Red color
         copyBtn.textContent = 'Failed';
-        
+
         setTimeout(() => {
             copyBtn.style.backgroundColor = '';
             copyBtn.textContent = 'Copy';
@@ -76,11 +87,11 @@ function copyUpiId() {
 }
 
 // Add screenshot preview handler
-document.getElementById('screenshotInput').addEventListener('change', function(e) {
+document.getElementById('screenshotInput').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const preview = document.getElementById('screenshotPreview');
             preview.innerHTML = `
                 <img src="${e.target.result}" alt="Payment Screenshot">
@@ -170,8 +181,8 @@ async function submitUTR() {
         // Only re-enable the button if the payment did NOT succeed
         const successAnimationExists = document.querySelector('.success-animation');
         if (!successAnimationExists) {
-             submitBtn.disabled = false;
-             submitBtn.textContent = 'Verify Payment';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Verify Payment';
         }
     }
 }
@@ -189,12 +200,12 @@ function showInfo(message) {
     const infoDiv = document.createElement('div');
     infoDiv.className = 'info-message';
     infoDiv.innerHTML = message;
-    
+
     const existingInfo = document.querySelector('.info-message');
     if (existingInfo) {
         existingInfo.remove();
     }
-    
+
     const submitBtn = document.querySelector('.submit-btn');
     submitBtn.parentNode.insertBefore(infoDiv, submitBtn.nextSibling);
 }
@@ -203,15 +214,15 @@ function showSuccess(message) {
     const successDiv = document.createElement('div');
     successDiv.className = 'success-message';
     successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-    
+
     const existingSuccess = document.querySelector('.success-message');
     if (existingSuccess) {
         existingSuccess.remove();
     }
-    
+
     const submitBtn = document.querySelector('.submit-btn');
     submitBtn.parentNode.insertBefore(successDiv, submitBtn.nextSibling);
-    
+
     setTimeout(() => {
         successDiv.remove();
     }, 3000);
@@ -256,9 +267,11 @@ function showSuccessAnimation() {
 function openApp(app) {
     const upiId = document.getElementById('upiId').textContent;
     const payeeName = document.getElementById('upiName').textContent.replace('Receiver: ', '');
+    // Get company name from upi.txt data
+    let companyName = '';
     let url;
 
-    switch(app) {
+    switch (app) {
         case 'phonepe':
             url = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
             break;
