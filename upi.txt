@@ -1,1 +1,1 @@
-{"id": "predictpay@axisbank", "name": "Nikhil"}
+{"id": "predictpay@axisbank", "name": "Nikhil", "companyName": "PredictPay Services"}
